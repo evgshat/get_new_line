@@ -6,7 +6,7 @@
 /*   By: lcharlet <lcharlet@student.21-school.ru    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/27 19:30:11 by lcharlet          #+#    #+#             */
-/*   Updated: 2021/05/15 19:29:27 by lcharlet         ###   ########.fr       */
+/*   Updated: 2021/05/17 12:17:48 by lcharlet         ###   ########lyon.fr   */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,5 +52,6 @@ char		*ft_strtrim(char const *s1, char const *set);
 char		*ft_substr(char const *s, unsigned int start, size_t len);
 int			ft_tolower(int ch);
 int			ft_toupper(int ch);
+char		*strcpy(char *s1, const char *s2);
 
 #endif

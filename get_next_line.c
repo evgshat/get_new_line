@@ -3,6 +3,7 @@
 // проверить на утечки
 // в видео исп ф-ия strclr
 // видео - 40:28
+// проверить на -1
 
 #include "get_next_line.h"
 
@@ -17,13 +18,12 @@ char	*check_ost(char *ost, char **line)
 		{
 			*pointer_n = '\0';
 			*line = ft_strdup(ost);
-			pointer_n++;
-			ft_strlcpy = (ost, pointer_n);
-			//ft_strclr(ost);
+			ft_strcpy(ost, ++pointer_n);
 		}
 		else
 		{
 			*line = ft_strdup(ost);
+			ft_strclr(ost);
 		}
 	}
 	else
@@ -34,12 +34,13 @@ char	*check_ost(char *ost, char **line)
 int	get_next_line(int fd, char **line)
 {
 	int			byte_was_read;
-	char		buf[500 + 1];
+	char		buf[10000000 + 1];
 	char		*pointer_n;
 	static char	*ost;
+	char		*tmp;
 
-	check_ost(ost, *line);
-	while (pointer_n == 0 && (byte_was_read = read(fd, buf, 500)))
+	pointer_n = check_ost(ost, line);
+	while (pointer_n == 0 && (byte_was_read = read(fd, buf, 10000000)))
 	{
 		buf[byte_was_read] = '\0';
 		if ((pointer_n = ft_strchr(buf, '\n')))
@@ -48,9 +49,14 @@ int	get_next_line(int fd, char **line)
 			pointer_n++;
 			ost = ft_strdup(pointer_n);
 		}
+		tmp = *line;
 		*line = ft_strjoin(*line, buf);
+		//free(tmp);
 	}
-	return (0);
+	if (byte_was_read != '\0' || ft_strlen(ost) != 0 || ft_strlen(*line) != 0)
+		return (1);
+	else
+		return (0);
 }
 
 int	main(void)
@@ -59,10 +65,6 @@ int	main(void)
 	int		fd;
 
 	fd = open ("text.txt", O_RDONLY);
-	get_next_line(fd, &line);
-	printf("%s\n", line);
-	get_next_line(fd, &line);
-	printf("%s\n", line);
-	// get_next_line(fd, &line);
-	// printf("%s\n", line);
+	while (get_next_line(fd, &line))
+		printf("%s\n\n", line);
 }
