@@ -4,11 +4,7 @@
 # include <stdio.h>
 # include <fcntl.h>
 # include <stdlib.h>
-# include <stdlib.h>
 # include <unistd.h>
-# include "libft.h"
-
-#define BUFFER_SIZE
 
 int			get_next_line(int fd, char **line);
 char		*ft_strjoin(char const *s1, char const *s2);

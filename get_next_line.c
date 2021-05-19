@@ -1,70 +1,84 @@
-// в видео, вместо strlcpy исп. strcpy
-// в видео исп ф-ия strnew
-// проверить на утечки
-// в видео исп ф-ия strclr
-// видео - 40:28
-// проверить на -1
+// из стандартного ввода
+// ctrl+D
+// ft_strchr (const char *s, int c)
+// printf("%s\n", ost);
+// при 9999 и 10000000 - выводит только одну строку
+// ^D
 
 #include "get_next_line.h"
 
-char	*check_ost(char *ost, char **line)
+char	*delete_ost(char *line)
 {
-	char		*pointer_n;
+	int	i;
 
-	pointer_n = NULL;
-	if (ost)
+	i = 0;
+	while (line[i] != '\n')
+		i++;
+	line[i] = '\0';
+	return (line);
+}
+
+char	*create_ost(char *line)
+{
+	int		cnt;
+	int		i;
+	char	*ost;
+
+	cnt = 0;
+	i = 0;
+	while (*line != '\n')
+		line++;
+	line++;
+	while (line[i] != '\0')
 	{
-		if ((pointer_n = ft_strchr(ost, '\n')))
-		{
-			*pointer_n = '\0';
-			*line = ft_strdup(ost);
-			ft_strcpy(ost, ++pointer_n);
-		}
-		else
-		{
-			*line = ft_strdup(ost);
-			ft_strclr(ost);
-		}
+		cnt++;
+		i++;
 	}
-	else
-		*line = "\0";
-	return (pointer_n);
+	i = 0;
+	ost = malloc (cnt + 1);
+	while (*line != '\0')
+	{
+		ost[i] = *line;
+		i++;
+		line++;
+	}
+	return (ost);
 }
 
 int	get_next_line(int fd, char **line)
 {
-	int			byte_was_read;
-	char		buf[10000000 + 1];
-	char		*pointer_n;
-	static char	*ost;
-	char		*tmp;
+	char		*buf;
+	int			byte;
+	char		*point;
+	int			flag;
+	char static	*ost;
 
-	pointer_n = check_ost(ost, line);
-	while (pointer_n == 0 && (byte_was_read = read(fd, buf, 10000000)))
+	byte = 0;
+	flag = 0;
+	*line = "\0";
+	while (flag == 0)
 	{
-		buf[byte_was_read] = '\0';
-		if ((pointer_n = ft_strchr(buf, '\n')))
-		{
-			*pointer_n = '\0';
-			pointer_n++;
-			ost = ft_strdup(pointer_n);
-		}
-		tmp = *line;
+		buf = malloc(BUFFER_SIZE + 1);
+		byte = read(fd, buf, BUFFER_SIZE);
+		buf[byte] = '\0';
+		point = ft_strchr(buf, '\n');
+		if (point != NULL)
+			flag = 1;
 		*line = ft_strjoin(*line, buf);
-		//free(tmp);
 	}
-	if (byte_was_read != '\0' || ft_strlen(ost) != 0 || ft_strlen(*line) != 0)
-		return (1);
-	else
-		return (0);
+	if (ost != NULL)
+		*line = ft_strjoin(ost, *line);
+	ost = create_ost(*line);
+	*line = delete_ost(*line);
+	return (byte);
 }
 
 int	main(void)
 {
-	char	*line;
 	int		fd;
+	char	*line;
 
-	fd = open ("text.txt", O_RDONLY);
+	fd = open("add/text.txt", O_RDONLY);
 	while (get_next_line(fd, &line))
-		printf("%s\n\n", line);
+		printf("%s\n", line);
 }

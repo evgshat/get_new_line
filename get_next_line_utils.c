@@ -1,4 +1,4 @@
-#include "libft.h"
+# include "get_next_line.h"
 
 char	*ft_strchr (const char *s, int c)
 {
@@ -96,5 +96,3 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	new_s[j] = '\0';
 	return (new_s);
 }
-
-
