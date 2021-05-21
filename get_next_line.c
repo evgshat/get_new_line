@@ -4,6 +4,7 @@
 // printf("%s\n", ost);
 // при 9999 и 10000000 - выводит только одну строку
 // ^D
+// gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 get_next_line.c get_next_line_utils.c
 
 #include "get_next_line.h"
 
@@ -55,7 +56,7 @@ int	get_next_line(int fd, char **line)
 
 	byte = 0;
 	flag = 0;
-	*line = "\0";
+	*line = NULL;
 	while (flag == 0)
 	{
 		buf = malloc(BUFFER_SIZE + 1);
@@ -70,15 +71,8 @@ int	get_next_line(int fd, char **line)
 		*line = ft_strjoin(ost, *line);
 	ost = create_ost(*line);
 	*line = delete_ost(*line);
-	return (byte);
-}
-
-int	main(void)
-{
-	int		fd;
-	char	*line;
-
-	fd = open("add/text.txt", O_RDONLY);
-	while (get_next_line(fd, &line))
-		printf("%s\n", line);
+	if (byte != 0 || ost != 0 || *line != NULL)
+		return (1);
+	else
+		return (0);
 }
