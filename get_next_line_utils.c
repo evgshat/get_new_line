@@ -22,27 +22,6 @@ char	*ft_strchr (const char *s, int c)
 	return (NULL);
 }
 
-char	*ft_strdup(const char *str)
-{
-	int		i;
-	char	*new_str;
-
-	i = 0;
-	while (str[i] != '\0')
-		i++;
-	new_str = malloc(i + 1);
-	if (new_str == 0)
-		return (NULL);
-	i = 0;
-	while (str[i] != '\0')
-	{
-		new_str[i] = str[i];
-		i++;
-	}
-	new_str[i] = '\0';
-	return (new_str);
-}
-
 size_t	ft_strlen (const char *str)
 {
 	size_t	i;
@@ -77,4 +56,31 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		new_s[j++] = s2[i++];
 	new_s[j] = '\0';
 	return (new_s);
+}
+
+void	ft_bzero(void *s, size_t n)
+{
+	unsigned char	*new_s;
+	size_t			i;
+
+	new_s = (unsigned char *)s;
+	i = 0;
+	while (i < n)
+	{
+		new_s[i] = '\0';
+		i++;
+	}
+}
+
+void	*ft_calloc(size_t number, size_t size)
+{
+	void	*new;
+	size_t	cnt;
+
+	cnt = number * size;
+	new = malloc(cnt);
+	if (new == 0)
+		return (0);
+	ft_bzero(new, cnt);
+	return (new);
 }

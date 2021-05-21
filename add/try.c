@@ -40,6 +40,7 @@ char	*create_ost(char *line)
 		i++;
 		line++;
 	}
+	// ost[i] = '\0';
 	return (ost);
 }
 
@@ -68,7 +69,7 @@ int	get_next_line(int fd, char **line)
 		*line = ft_strjoin(ost, *line);
 	ost = create_ost(*line);
 	*line = delete_ost(*line);
-	if (byte == 0 || ost == 0)
+	if (byte == 0 || ft_strlen(ost) == 0 || ft_strlen(*line) == 0)
 		return (0);
 	else
 		return (1);
