@@ -1,83 +1,70 @@
 // из стандартного ввода
 // ctrl+D
 // ft_strchr (const char *s, int c)
-//printf("%s\n", ost);
-// gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 get_next_line.c get_next_line_utils.c
-
+// printf("%s\n", ost);
+// gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 *.c
+// gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 right.c get_next_line_utils.c
+// gcc -D BUFFER_SIZE=32 right.c get_next_line_utils.c
 #include "get_next_line.h"
 
-char	*delete_ost(char *line)
+char	*check_ost(char *ost, char **line)
 {
-	int		i;
-	char	*p;
+	char	*point;
 
-	i = 0;
-	p = ft_strchr(line, '\n');
-	if (p == NULL)
-		return (line);
-	while (line[i] != '\n')
-		i++;
-	line[i] = '\0';
-	return (line);
-}
-
-char	*create_ost(char *line)
-{
-	int		cnt;
-	int		i;
-	char	*ost;
-	char	*p;
-
-	cnt = 0;
-	i = 0;
-	p = ft_strchr(line, '\n');
-	if (p == NULL)
-		return (0);
+	point = NULL;
+	if (ost)
+	{
+		point = ft_strchr(ost, '\n');
+		if (point != NULL)
+		{
+			*point = '\0';
+			*line = ft_strdup(ost);
+			point++;
+			ft_strlcpy(ost, point, ft_strlen(point) + 1);
+		}
+		else
+		{
+			*line = ft_strdup(ost);
+			free(ost);
+			ost = NULL;
+		}
+	}
 	else
-		p++;
-	while (p[i] != '\0')
 	{
-		cnt++;
-		i++;
+		*line = "\0";
 	}
-	i = 0;
-	ost = malloc (cnt + 1);
-	while (*p != '\0')
-	{
-		ost[i] = *p;
-		i++;
-		p++;
-	}
-	ost[i] = '\0';
-	return (ost);
+	return (point);
 }
 
 int	get_next_line(int fd, char **line)
 {
+	static char		*ost;
 	char			*buf;
 	int				byte;
 	char			*point;
-	char static		*ost;
+	int				cnt;
 
-	byte = 0;
-	point = NULL;
-	if (fd < 0 || fd > 19)
-		return (0);
-	*line = ft_calloc(1, 1);
+	if (fd == -1)
+		return (-1);
+	point = check_ost(ost, line);
 	buf = malloc(BUFFER_SIZE + 1);
 	byte = read(fd, buf, BUFFER_SIZE);
-	while (byte != 0)
+	while (byte != 0 && point == NULL)
 	{
 		buf[byte] = '\0';
 		point = ft_strchr(buf, '\n');
 		if (point != NULL)
+		{
 			*point = '\0';
+			point++;
+			ost = ft_strdup(point);
+		}
 		*line = ft_strjoin(*line, buf);
 		byte = read(fd, buf, BUFFER_SIZE);
 	}
-	if (ost != NULL)
-		*line = ft_strjoin(ost, *line);
-	ost = create_ost(*line);
-	*line = delete_ost(*line);
-	return (1);
+	cnt = ft_strlen(*line);
+	if (cnt == 0)
+		return (0);
+	else
+		return (1);
 }
