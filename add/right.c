@@ -3,37 +3,58 @@
 // ft_strchr (const char *s, int c)
 // printf("%s\n", ost);
 // gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 *.c
+// gcc -D BUFFER_SIZE=32 *.c
 // gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 right.c get_next_line_utils.c
-// gcc -D BUFFER_SIZE=32 right.c get_next_line_utils.c
+// gcc -D BUFFER_SIZE=1 right.c get_next_line_utils.c
+// gcc -g -D BUFFER_SIZE=32 right.c get_next_line_utils.c
 #include "get_next_line.h"
 
-char	*check_ost(char *ost, char **line)
+static char	*check_ost(char **ost, char *line)
 {
-	char	*point;
+	char	*point_n;
+	char	*point_zero;
+	int		i;
+	int		j;
 
-	point = NULL;
-	if (ost)
+	i = 0;
+	point_n = NULL;
+	if (*ost)
 	{
-		point = ft_strchr(ost, '\n');
-		if (point != NULL)
+		point_n = ft_strchr(*ost, '\n');
+		if (point_n == NULL)
 		{
-			*point = '\0';
-			*line = ft_strdup(ost);
-			point++;
-			ft_strlcpy(ost, point, ft_strlen(point) + 1);
+			point_zero = ft_strchr(*ost, '\0');
+			if (point_zero != NULL)
+			{
+				*ost = NULL;
+				return (line);
+			}
+			line = ft_strdup(*ost);
+			*ost = NULL;
+			return (line);
 		}
 		else
 		{
-			*line = ft_strdup(ost);
-			free(ost);
-			ost = NULL;
+			while (ost[i][j] != '\n')
+				j++;
+			line = malloc(i + 1);
+			j = 0;
+			while (ost[i][j] != '\n')
+			{
+				line[j] = ost[i][j];
+				j++;
+			}
+			line[j] = '\0';
+			printf("%s\n", line);
+			*ost = ++point_n;
+			return (line);
 		}
 	}
 	else
 	{
-		*line = "\0";
+		line = "\0";
+		return (line);
 	}
-	return (point);
 }
 
 int	get_next_line(int fd, char **line)
@@ -42,31 +63,41 @@ int	get_next_line(int fd, char **line)
 	char			*buf;
 	int				byte;
 	char			*point;
+	int				flag;
+	char			*chr_n_line;
 	int				cnt;
 
-	if (fd == -1)
-		return (-1);
-	point = check_ost(ost, line);
+	*line = "\0";
+	chr_n_line = NULL;
+	point = NULL;
+	flag = 0;
+	cnt = 0;
 	buf = malloc(BUFFER_SIZE + 1);
-	byte = read(fd, buf, BUFFER_SIZE);
-	while (byte != 0 && point == NULL)
-	{
-		buf[byte] = '\0';
-		point = ft_strchr(buf, '\n');
-		if (point != NULL)
+	*line = check_ost(&ost, *line);
+	printf("%s\n", *line);
+		while (flag == 0)
 		{
-			*point = '\0';
-			point++;
-			ost = ft_strdup(point);
+			byte = read(fd, buf, BUFFER_SIZE);
+			buf[BUFFER_SIZE] = '\0';
+			point = ft_strchr(buf, '\n');
+			if (point != NULL)
+			{
+				*point = '\0';
+				point++;
+				*line = ft_strjoin(*line, buf);
+				cnt = ft_strlen(point);
+				ost = malloc(cnt);
+				ft_strlcpy(ost, point, ft_strlen(point));
+				flag = 1;
+			}
+			else
+			{
+				*line = ft_strjoin(*line, buf);
+			}
 		}
-		*line = ft_strjoin(*line, buf);
-		byte = read(fd, buf, BUFFER_SIZE);
-	}
-	cnt = ft_strlen(*line);
-	if (cnt == 0)
+	if (byte == 0 && ost == NULL)
 		return (0);
-	else
-		return (1);
+	return (1);
 }
 
 int	main(void)
@@ -74,11 +105,13 @@ int	main(void)
 	int		fd;
 	char	*line;
 
-	fd = open("text.txt", O_RDONLY);
+	fd = open("text2.txt", O_RDONLY);
+	// while (get_next_line(fd, &line) != 0)
+	// 	printf("%s\n", line);
+	get_next_line(fd, &line);
+	printf("%s\n", line);
+	get_next_line(fd, &line);
+	printf("%s\n", line);
 	// get_next_line(fd, &line);
 	// printf("%s\n", line);
-	// get_next_line(fd, &line);
-	// printf("%s\n", line);
-	while (get_next_line(fd, &line) != 0)
-		printf("%s\n", line);
 }
