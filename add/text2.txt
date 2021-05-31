@@ -1,3 +1,2 @@
-abc
-de
-f
+abcdef
+gcc
