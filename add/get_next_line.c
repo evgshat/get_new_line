@@ -1,40 +1,65 @@
-// из стандартного ввода
-// ctrl+D
-// ft_strchr (const char *s, int c)
-// printf("%s\n", ost);
-// gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 *.c
 // gcc -Wall -Wextra -Werror -D BUFFER_SIZE=32 right.c get_next_line_utils.c
-// gcc -D BUFFER_SIZE=32 right.c get_next_line_utils.c
+// gcc -g -D BUFFER_SIZE=32 get_next_line.c get_next_line_utils.c
 #include "get_next_line.h"
 
-char	*check_ost(char *ost, char **line)
+static char	*check_ost(char **ost, char *line)
 {
-	char	*point;
+	char	*point_n;
+	int		i;
+	int		j;
 
-	point = NULL;
-	if (ost)
+	i = 0;
+	j = 0;
+	point_n = NULL;
+	if (*ost)
 	{
-		point = ft_strchr(ost, '\n');
-		if (point != NULL)
+		point_n = ft_strchr(*ost, '\n');
+		if (point_n == NULL)
 		{
-			*point = '\0';
-			*line = ft_strdup(ost);
-			point++;
-			ft_strlcpy(ost, point, ft_strlen(point) + 1);
+			line = ft_strdup(*ost);
+			*ost = NULL;
+			return (line);
 		}
 		else
 		{
-			*line = ft_strdup(ost);
-			free(ost);
-			ost = NULL;
+			while (ost[i][j] != '\n')
+				j++;
+			line = malloc(i + 1);
+			j = 0;
+			while (ost[i][j] != '\n')
+			{
+				line[j] = ost[i][j];
+				j++;
+			}
+			line[j] = '\0';
+			*ost = ++point_n;
+			return (line);
 		}
 	}
 	else
 	{
-		*line = malloc(sizeof(char));
-		*line = "\0";
+		line = "\0";
+		return (line);
 	}
-	return (point);
+}
+
+int	check_read_on_zero(int fd, char **ost)
+{
+	int		byte;
+	char	*buf;
+
+	buf = malloc(BUFFER_SIZE + 1);
+	byte = read(fd, buf, BUFFER_SIZE);
+	if (byte > 0)
+	{
+		buf[byte] = '\0';
+		if (*ost != NULL)
+			*ost = ft_strjoin(*ost, buf);
+		else
+			*ost = ft_strdup(buf);
+		return (1);
+	}
+	return (0);
 }
 
 int	get_next_line(int fd, char **line)
@@ -43,40 +68,99 @@ int	get_next_line(int fd, char **line)
 	char			*buf;
 	int				byte;
 	char			*point;
+	int				flag;
 	int				cnt;
 
-	if (fd == -1)
-		return (-1);
-	point = check_ost(ost, line);
+	*line = "\0";
+	flag = 0;
+	point = NULL;
 	buf = malloc(BUFFER_SIZE + 1);
-	byte = read(fd, buf, BUFFER_SIZE);
-	while (byte != 0 && point == NULL)
+	*line = check_ost(&ost, *line);
+	while (flag == 0)
 	{
+		byte = read(fd, buf, BUFFER_SIZE);
+		if (byte == 0)
+			flag = 1;
 		buf[byte] = '\0';
 		point = ft_strchr(buf, '\n');
 		if (point != NULL)
 		{
 			*point = '\0';
 			point++;
-			ost = ft_strdup(point);
+			*line = ft_strjoin(*line, buf);
+			cnt = ft_strlen(point);
+			ost = malloc(cnt);
+			if (*point == '\0')
+				ost = NULL;
+			else
+				ft_strlcpy(ost, point, ft_strlen(point));
+			flag = 1;
 		}
-		*line = ft_strjoin(*line, buf);
-		byte = read(fd, buf, BUFFER_SIZE);
+		else
+		{
+			*line = ft_strjoin(*line, buf);
+		}
 	}
-	byte = read(fd, buf, BUFFER_SIZE);
-	cnt = ft_strlen(buf);
-	if (byte == 0 || cnt == 0)
+	byte = check_read_on_zero(fd, &ost);
+	if (byte == 0 && ost == NULL)
 		return (0);
-	else
-		return (1);
+	return (1);
 }
 
-int	main(void)
- {
- 	int		fd;
- 	char	*line;
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
 
- 	fd = open("add/text.txt", O_RDONLY);
- 	while (get_next_line(fd, &line) != 0)
- 		printf("%s\n", line);
- }
+// 	fd = open("text2.txt", O_RDONLY);
+// 	while (get_next_line(fd, &line) != 0)
+// 	{
+// 		printf("%s\n", line);
+// 	}
+// }
+
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+
+// 	fd = open("text2.txt", O_RDONLY);
+// 	get_next_line(fd, &line);
+// 	printf("%s\n", line);
+// }
+
+// int	main(void)
+// {
+// 	int		ret;
+// 	char	*line;
+// 	int		fd;
+
+// 	fd = open("text2.txt", O_RDONLY);
+// 	line = 0;
+// 	ret = get_next_line(fd, &line);
+// 	while (ret > 0)
+// 	{
+// 		write(1, line, ft_strlen(line));
+// 		write(1, "\n", 1);
+// 		free(line);
+// 		line = 0;
+// 		ret = get_next_line(0, &line);
+// 	}
+// 	if (ret == 0)
+// 	{
+// 		write(1, line, ft_strlen(line));
+// 		write(1, "\n", 1);
+// 		free(line);
+// 		line = 0;
+// 	}
+// }
+
+// int	main(void)
+// {
+// 	int		fd;
+// 	char	*line;
+
+// 	fd = 0;
+// 	get_next_line(fd, &line);
+// 	printf("%s\n", line);
+// }
