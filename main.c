@@ -1,11 +1,13 @@
 #include "get_next_line.h"
 
- int	main(void)
- {
- 	int		fd;
- 	char	*line;
+int	main(void)
+{
+	int		fd;
+	char	*line;
 
- 	fd = open("add/text.txt", O_RDONLY);
- 	while (get_next_line(fd, &line) != 0)
- 		printf("%s\n", line);
- }
+	fd = open("text.txt", O_RDONLY);
+	//fd = 0;
+	while (get_next_line(fd, &line) != 0)
+		printf("|%s|\n", line);
+	printf("|%s|\n", line);
+}

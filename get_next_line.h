@@ -14,10 +14,11 @@ void		ft_strclr(char *str);
 size_t		ft_strlen (const char *str);
 void		*ft_calloc(size_t number, size_t size);
 char		*ft_strdup(const char *str);
-size_t		ft_strlcpy(char *restrict dst, const char *restrict src, size_t dstsize);
+size_t		ft_strlcpy(char *restrict dst, const char *restrict src,
+				 size_t dstsize);
 
 #ifndef BUFFER_SIZE
-# define BUFFER_SIZE 100
+# define BUFFER_SIZE 1
 #endif
 
 #endif
