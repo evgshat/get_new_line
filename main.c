@@ -11,3 +11,5 @@ int	main(void)
 		printf("|%s|\n", line);
 	printf("|%s|\n", line);
 }
+
+// int	get_next_line(int fd, char **line) // рпрошлый прототип

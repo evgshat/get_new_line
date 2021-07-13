@@ -13,11 +13,13 @@ char	*check_ost(char *ost, char **line)
 			*point = '\0';
 			*line = ft_strdup(ost);
 			point++;
-			ft_strlcpy(ost, point, ft_strlen(point) + 1);
+			ft_strlcpy(ost, point, ft_strlen(point) + 1); //ft_strcpy(ost,
+			// point);
 		}
 		else
 		{
 			*line = ft_strdup(ost);
+			//ft_strclr(ost);
 			ost = NULL;
 		}
 	}
@@ -28,7 +30,7 @@ char	*check_ost(char *ost, char **line)
 	return (point);
 }
 
-int	get_next_line(int fd, char **line)
+char *get_next_line(int fd)
 {
 	static char		*ost;
 	char			*buf;
@@ -36,7 +38,8 @@ int	get_next_line(int fd, char **line)
 	char			*point;
 	char			*tmp;
 
-	if (line == NULL || fd < 0 || fd > 19 || BUFFER_SIZE <= 0 || BUFFER_SIZE > 2000)
+	if (line == NULL || fd < 0 || fd > 19 || BUFFER_SIZE <= 0 || BUFFER_SIZE
+	> 2000)
 		return (-1);
 	point = check_ost(ost, line);
 	if (point != NULL)
@@ -62,5 +65,9 @@ int	get_next_line(int fd, char **line)
 		free(tmp);
 		byte_was_read = read(fd, buf, BUFFER_SIZE);
 	}
+//	if (byte_was_read == 0 && ost == NULL)
+//		return (0);
+//	if (byte_was_read == 0 && ft_strlen(ost) == 0)
+//		return (0);
 	return (0);
 }
