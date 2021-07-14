@@ -6,7 +6,7 @@
 # include <stdlib.h>
 # include <unistd.h>
 
-int			get_next_line(int fd, char **line);
+char		*get_next_line(int fd);
 char		*ft_strjoin(char const *s1, char const *s2);
 char		*ft_strchr (const char *s, int c);
 char		*ft_strcpy(char *s1, const char *s2);

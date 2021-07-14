@@ -30,20 +30,20 @@ char	*check_ost(char *ost, char **line)
 	return (point);
 }
 
-char *get_next_line(int fd)
+char	*get_next_line(int fd)
 {
 	static char		*ost;
 	char			*buf;
 	int				byte_was_read;
 	char			*point;
 	char			*tmp;
+	char			*line;
 
-	if (line == NULL || fd < 0 || fd > 19 || BUFFER_SIZE <= 0 || BUFFER_SIZE
-	> 2000)
+	if (fd < 0 || fd > 19 || BUFFER_SIZE <= 0)
 		return (-1);
-	point = check_ost(ost, line);
-	if (point != NULL)
-		return (1);
+	// point = check_ost(ost, line);
+	// if (point != NULL)
+	// 	return (1);
 	buf = (char *) malloc(sizeof(char) * BUFFER_SIZE + 1);
 	byte_was_read = read(fd, buf, BUFFER_SIZE);
 	while (!point && (byte_was_read != 0))
@@ -60,7 +60,7 @@ char *get_next_line(int fd)
 			free(tmp);
 			return (1);
 		}
-		tmp = *line;
+		tmp = line;
 		*line = ft_strjoin(tmp, buf);
 		free(tmp);
 		byte_was_read = read(fd, buf, BUFFER_SIZE);
